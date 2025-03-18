@@ -39,18 +39,22 @@ int mnt_init(void)
     {
         rt_kprintf("Dir /dev/shm mount failed!\n");
     }
-
+#ifdef RT_USING_DFS_PROCFS
+    dfs_mount(RT_NULL, "/proc", "procfs", 0, RT_NULL);
+#endif
 #ifdef BSP_SD_SDIO_DEV
     while (mmcsd_wait_cd_changed(100) != MMCSD_HOST_PLUGED)
         ;
 
-    if (dfs_mount(BSP_SD_MNT_DEVNAME, "/mnt", "elm", 0, 0) != 0)
-    {
-        rt_kprintf("Dir /mnt mount failed!\n");
+    if (dfs_mount(BSP_SD_MNT_DEVNAME, "/sdcard", "elm", 0, 0) != 0)
+	{
+        rt_kprintf("Dir /sdcard mount failed!\n");
     }
 #endif
 
+#ifndef RT_FASTBOOT
     rt_kprintf("file system initialization done!\n");
+#endif
 
     return 0;
 }
